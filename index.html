@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BadgeTime — GUILLEVIC</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #050d15;
+  --panel:     rgba(10,28,48,0.75);
+  --border:    rgba(80,200,255,0.18);
+  --glow:      #00c8ff;
+  --glow2:     #00ffc8;
+  --glow3:     #7b6fff;
+  --danger:    #ff4d6a;
+  --warn:      #ffb800;
+  --ok:        #00e5a0;
+  --txt:       #c8eeff;
+  --txt-dim:   rgba(180,230,255,0.45);
+  --mono:      'Share Tech Mono', monospace;
+  --display:   'Orbitron', sans-serif;
+  --body:      'Exo 2', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--txt);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ── FOND ANIMÉ ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(0,200,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 80% 80%, rgba(123,111,255,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(0,255,200,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* grille tech */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,200,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,200,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap {
+  position: relative; z-index: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 14px 60px;
+}
+
+/* ── HEADER ── */
+header {
+  text-align: center;
+  padding: 28px 0 20px;
+  position: relative;
+}
+.header-line {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 80px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--glow), transparent);
+}
+.app-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--glow);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-bottom: 6px;
+  animation: pulse-txt 3s ease-in-out infinite;
+}
+@keyframes pulse-txt { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+.app-title {
+  font-family: var(--display);
+  font-size: clamp(1.6rem, 7vw, 2.2rem);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  background: linear-gradient(135deg, var(--glow) 0%, var(--glow2) 50%, var(--glow3) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 20px rgba(0,200,255,0.4));
+}
+.app-sub {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--txt-dim);
+  letter-spacing: 0.2em;
+  margin-top: 4px;
+}
+
+/* ── HORLOGE ── */
+.clock-block {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin: 22px 0 16px;
+  backdrop-filter: blur(20px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 30px rgba(0,200,255,0.06), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.clock-time {
+  font-family: var(--display);
+  font-size: clamp(2rem, 10vw, 2.8rem);
+  font-weight: 700;
+  color: var(--glow);
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 20px rgba(0,200,255,0.5);
+  animation: clock-blink 1s step-end infinite;
+}
+@keyframes clock-blink {
+  50% { opacity: 0.85; }
+}
+.clock-right { text-align: right; }
+.clock-date {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--txt-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.clock-week {
+  font-family: var(--display);
+  font-size: 0.75rem;
+  color: var(--glow2);
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}
+
+/* ── PROGRESSION JOURNÉE ── */
+.progress-block {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(20px);
+}
+.progress-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--txt-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.progress-label span { color: var(--glow2); }
+.progress-bar-outer {
+  height: 6px;
+  background: rgba(0,200,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  border: 1px solid rgba(0,200,255,0.1);
+}
+.progress-bar-inner {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--glow), var(--glow2));
+  box-shadow: 0 0 8px rgba(0,200,255,0.6);
+  transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  width: 0%;
+}
+.progress-stats {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--txt-dim);
+}
+.progress-stats .val { color: var(--glow); }
+
+/* ── BADGES ── */
+.badges-title {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--txt-dim);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 0 2px;
+  margin-bottom: 10px;
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.badge-btn {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 14px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.badge-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,200,255,0.4), transparent);
+}
+.badge-btn:hover:not(:disabled) {
+  border-color: rgba(0,200,255,0.5);
+  box-shadow: 0 0 25px rgba(0,200,255,0.15), 0 4px 20px rgba(0,0,0,0.4);
+  transform: translateY(-2px);
+}
+.badge-btn:active:not(:disabled) {
+  transform: translateY(0px) scale(0.98);
+}
+.badge-btn:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+.badge-btn.done {
+  border-color: rgba(0,229,160,0.4);
+  box-shadow: 0 0 20px rgba(0,229,160,0.1);
+}
+.badge-btn.done::before {
+  background: linear-gradient(90deg, transparent, rgba(0,229,160,0.4), transparent);
+}
+.badge-btn.alert {
+  border-color: rgba(255,184,0,0.5);
+  box-shadow: 0 0 20px rgba(255,184,0,0.12);
+}
+
+.btn-num {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--glow);
+  line-height: 1;
+  margin-bottom: 6px;
+  opacity: 0.3;
+  transition: opacity 0.3s;
+}
+.badge-btn.done .btn-num { opacity: 1; color: var(--ok); }
+.badge-btn.active .btn-num { opacity: 1; }
+
+.btn-label {
+  font-family: var(--display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--txt);
+  margin-bottom: 4px;
+}
+.btn-plage {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  color: var(--txt-dim);
+  letter-spacing: 0.05em;
+}
+.btn-time {
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ok);
+  margin-top: 8px;
+  text-shadow: 0 0 10px rgba(0,229,160,0.5);
+  min-height: 1.3rem;
+}
+.btn-alert {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  color: var(--warn);
+  margin-top: 3px;
+  min-height: 0.8rem;
+}
+
+/* Bouton actif (prochain à badger) */
+.badge-btn.active {
+  border-color: rgba(0,200,255,0.6);
+  box-shadow: 0 0 30px rgba(0,200,255,0.2), 0 4px 20px rgba(0,0,0,0.4);
+  animation: active-pulse 2s ease-in-out infinite;
+}
+@keyframes active-pulse {
+  0%,100% { box-shadow: 0 0 20px rgba(0,200,255,0.15), 0 4px 20px rgba(0,0,0,0.4); }
+  50%      { box-shadow: 0 0 35px rgba(0,200,255,0.30), 0 4px 20px rgba(0,0,0,0.4); }
+}
+
+/* Ripple au clic */
+.badge-btn .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(0,200,255,0.3);
+  transform: scale(0);
+  animation: ripple 0.6s linear;
+  pointer-events: none;
+}
+@keyframes ripple {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ── MÉTRIQUES ── */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.metric-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.metric-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  color: var(--txt-dim);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.metric-val {
+  font-family: var(--display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--glow);
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 12px rgba(0,200,255,0.4);
+}
+.metric-val.ok    { color: var(--ok);     text-shadow: 0 0 12px rgba(0,229,160,0.4); }
+.metric-val.warn  { color: var(--warn);   text-shadow: 0 0 12px rgba(255,184,0,0.4); }
+.metric-val.danger{ color: var(--danger); text-shadow: 0 0 12px rgba(255,77,106,0.4); }
+.metric-sub {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  color: var(--txt-dim);
+  margin-top: 3px;
+}
+
+/* ── PAUSE MÉRIDIENNE ── */
+.pause-block {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(20px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pause-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--txt-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.pause-val {
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--glow2);
+  text-shadow: 0 0 10px rgba(0,255,200,0.4);
+}
+.pause-min {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  color: var(--txt-dim);
+  margin-top: 2px;
+  text-align: right;
+}
+
+/* ── BARRE HEBDO ── */
+.hebdo-block {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(20px);
+}
+.hebdo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.hebdo-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--txt-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.hebdo-val {
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--glow3);
+  text-shadow: 0 0 12px rgba(123,111,255,0.5);
+}
+.hebdo-bar-outer {
+  height: 8px;
+  background: rgba(123,111,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(123,111,255,0.15);
+}
+.hebdo-bar-inner {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--glow3), var(--glow));
+  box-shadow: 0 0 10px rgba(123,111,255,0.5);
+  transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  width: 0%;
+  position: relative;
+}
+.hebdo-plafond {
+  position: absolute;
+  right: 0; top: -2px; bottom: -2px;
+  width: 2px;
+  background: var(--danger);
+  box-shadow: 0 0 6px var(--danger);
+}
+
+/* ── ENVOI STATUS ── */
+.status-msg {
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  display: none;
+  margin-bottom: 12px;
+}
+.status-msg.ok      { background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.3); color: var(--ok); }
+.status-msg.err     { background: rgba(255,77,106,0.1); border: 1px solid rgba(255,77,106,0.3); color: var(--danger); }
+.status-msg.loading { background: rgba(0,200,255,0.08); border: 1px solid rgba(0,200,255,0.2); color: var(--glow); display: block; }
+.status-msg.show    { display: block; }
+
+/* ── RESET DU JOUR ── */
+.btn-reset {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(255,77,106,0.25);
+  border-radius: 10px;
+  padding: 10px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: rgba(255,77,106,0.6);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+.btn-reset:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  box-shadow: 0 0 15px rgba(255,77,106,0.15);
+}
+
+/* ── SCAN ANIMATION ── */
+.scan-line {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--glow) 50%, transparent 100%);
+  opacity: 0;
+  animation: scan 4s ease-in-out infinite;
+  z-index: 999;
+  pointer-events: none;
+}
+@keyframes scan {
+  0%   { top: 0%;   opacity: 0; }
+  5%   { opacity: 0.6; }
+  95%  { opacity: 0.6; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  color: rgba(0,200,255,0.25);
+  letter-spacing: 0.2em;
+  padding-top: 20px;
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+<div class="scan-line"></div>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="app-label">▶ Système de Pointage v2.0</div>
+    <div class="app-title">BADGETIME</div>
+    <div class="app-sub">GUILLEVIC · CRAMIF</div>
+    <div class="header-line"></div>
+  </header>
+
+  <!-- HORLOGE -->
+  <div class="clock-block">
+    <div class="clock-time" id="clock">--:--:--</div>
+    <div class="clock-right">
+      <div class="clock-date" id="clock-date">---</div>
+      <div class="clock-week" id="clock-week">SEM. --</div>
+    </div>
+  </div>
+
+  <!-- PROGRESSION JOURNÉE -->
+  <div class="progress-block">
+    <div class="progress-label">
+      <span>Progression journée</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="prog-bar"></div>
+    </div>
+    <div class="progress-stats">
+      <span>Travaillé : <span class="val" id="prog-travaille">0h 00</span></span>
+      <span>Théorique : <span class="val">7h 48</span></span>
+      <span>Restant : <span class="val" id="prog-restant">7h 48</span></span>
+    </div>
+  </div>
+
+  <!-- BADGES -->
+  <div class="badges-title">◈ Badgeages du jour</div>
+  <div class="badges-grid">
+
+    <button class="badge-btn active" id="btn-1" onclick="badger(1, this, event)">
+      <div class="btn-num">01</div>
+      <div class="btn-label">ARRIVÉE</div>
+      <div class="btn-plage">07h30 – 10h00</div>
+      <div class="btn-time" id="time-1"></div>
+      <div class="btn-alert" id="alert-1"></div>
+    </button>
+
+    <button class="badge-btn" id="btn-2" onclick="badger(2, this, event)" disabled>
+      <div class="btn-num">02</div>
+      <div class="btn-label">SORTIE MIDI</div>
+      <div class="btn-plage">11h45 – 14h00</div>
+      <div class="btn-time" id="time-2"></div>
+      <div class="btn-alert" id="alert-2"></div>
+    </button>
+
+    <button class="badge-btn" id="btn-3" onclick="badger(3, this, event)" disabled>
+      <div class="btn-num">03</div>
+      <div class="btn-label">RETOUR MIDI</div>
+      <div class="btn-plage">11h45 – 14h00</div>
+      <div class="btn-time" id="time-3"></div>
+      <div class="btn-alert" id="alert-3"></div>
+    </button>
+
+    <button class="badge-btn" id="btn-4" onclick="badger(4, this, event)" disabled>
+      <div class="btn-num">04</div>
+      <div class="btn-label">DÉPART SOIR</div>
+      <div class="btn-plage">15h45 – 18h30</div>
+      <div class="btn-time" id="time-4"></div>
+      <div class="btn-alert" id="alert-4"></div>
+    </button>
+
+  </div>
+
+  <!-- MÉTRIQUES -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">Matin</div>
+      <div class="metric-val" id="met-matin">--h --</div>
+      <div class="metric-sub">Badge 1 → 2</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Après-midi</div>
+      <div class="metric-val" id="met-apm">--h --</div>
+      <div class="metric-sub">Badge 3 → 4</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Total jour</div>
+      <div class="metric-val" id="met-total">--h --</div>
+      <div class="metric-sub">Théorique : 7h48</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Solde jour</div>
+      <div class="metric-val" id="met-solde">--</div>
+      <div class="metric-sub" id="met-solde-sub">en attente</div>
+    </div>
+  </div>
+
+  <!-- PAUSE MÉRIDIENNE -->
+  <div class="pause-block">
+    <div>
+      <div class="pause-label">◈ Pause méridienne</div>
+    </div>
+    <div>
+      <div class="pause-val" id="pause-val">-- min</div>
+      <div class="pause-min">minimum : 45 min</div>
+    </div>
+  </div>
+
+  <!-- HEBDOMADAIRE -->
+  <div class="hebdo-block">
+    <div class="hebdo-header">
+      <div class="hebdo-label">◈ Cumul semaine</div>
+      <div class="hebdo-val" id="hebdo-val">0h 00</div>
+    </div>
+    <div class="hebdo-bar-outer">
+      <div class="hebdo-bar-inner" id="hebdo-bar">
+        <div class="hebdo-plafond" title="Plafond 41h"></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);font-size:0.58rem;color:var(--txt-dim)">
+      <span>0h</span>
+      <span id="hebdo-ref" style="color:var(--glow3)">0 / 38h54</span>
+      <span style="color:var(--danger)">41h ⚠</span>
+    </div>
+  </div>
+
+  <!-- STATUS -->
+  <div class="status-msg" id="status-msg"></div>
+
+  <!-- RESET -->
+  <button class="btn-reset" onclick="resetJour()">⟳ Réinitialiser la journée</button>
+
+</div>
+
+<footer>BadgeTime · GUILLEVIC · 2026 · v2.0</footer>
+
+<script>
+// ══════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════
+const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbww03HXxalpIlA7P6FolQD0qYJoPocTOILTBO7AB2NjI3-65jvV8jqhF6cs97N3Fw4E/exec';
+
+const PLAGES = {
+  1: { debut: '07:30', fin: '10:00' },
+  2: { debut: '11:45', fin: '14:00' },
+  3: { debut: '11:45', fin: '14:00' },
+  4: { debut: '15:45', fin: '18:30' }
+};
+const THEORIQUE_MIN = 7 * 60 + 48; // 468 min = 7h48
+const PAUSE_MIN_MIN = 45;
+const HEBDO_PLAFOND = 41 * 60; // 2460 min
+const HEBDO_THEORIQUE = 38 * 60 + 54; // 5 × 7h48
+
+// ══════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════
+const TODAY = new Date().toISOString().split('T')[0];
+let state = JSON.parse(localStorage.getItem('bt_state') || '{}');
+if (state.date !== TODAY) {
+  state = { date: TODAY, badges: {}, hebdo: state.hebdo || {} };
+  localStorage.setItem('bt_state', JSON.stringify(state));
+}
+
+// ══════════════════════════════════════════════════
+// UTILITAIRES TEMPS
+// ══════════════════════════════════════════════════
+function now() {
+  const d = new Date();
+  return pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function toMin(hhmm) {
+  if (!hhmm) return null;
+  const [h, m] = hhmm.split(':').map(Number);
+  return h * 60 + m;
+}
+function fromMin(min) {
+  if (min === null || isNaN(min)) return '--h --';
+  const h = Math.floor(Math.abs(min) / 60);
+  const m = Math.abs(min) % 60;
+  const sign = min < 0 ? '-' : '';
+  return sign + h + 'h ' + pad(m);
+}
+function diffMin(a, b) {
+  const ma = toMin(a), mb = toMin(b);
+  if (ma === null || mb === null) return null;
+  return mb - ma;
+}
+
+function horsPlage(num, hhmm) {
+  const p = PLAGES[num];
+  const m = toMin(hhmm), d = toMin(p.debut), f = toMin(p.fin);
+  return m < d || m > f;
+}
+
+function getNumSemaine(date) {
+  const d = new Date(date);
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+  const w = new Date(d.getFullYear(), 0, 4);
+  return 1 + Math.round(((d - w) / 86400000 - 3 + (w.getDay() + 6) % 7) / 7);
+}
+
+// ══════════════════════════════════════════════════
+// HORLOGE
+// ══════════════════════════════════════════════════
+function updateClock() {
+  const d = new Date();
+  document.getElementById('clock').textContent =
+    pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  const jours = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'];
+  const mois = ['JAN','FÉV','MAR','AVR','MAI','JUN','JUL','AOÛ','SEP','OCT','NOV','DÉC'];
+  document.getElementById('clock-date').textContent =
+    jours[d.getDay()] + ' ' + pad(d.getDate()) + ' ' + mois[d.getMonth()] + ' ' + d.getFullYear();
+  document.getElementById('clock-week').textContent =
+    'SEM. ' + pad(getNumSemaine(d));
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ══════════════════════════════════════════════════
+// CALCULS
+// ══════════════════════════════════════════════════
+function calculs() {
+  const b = state.badges;
+
+  // Matin
+  const matin = diffMin(b[1], b[2]);
+  const el_matin = document.getElementById('met-matin');
+  if (matin !== null) {
+    el_matin.textContent = fromMin(matin);
+    el_matin.className = 'metric-val ok';
+  } else el_matin.textContent = '--h --';
+
+  // Pause méridienne
+  const pause = diffMin(b[2], b[3]);
+  const el_pause = document.getElementById('pause-val');
+  if (pause !== null) {
+    el_pause.textContent = pause + ' min';
+    el_pause.style.color = pause < PAUSE_MIN_MIN ? 'var(--danger)' : 'var(--glow2)';
+  } else el_pause.textContent = '-- min';
+
+  // APM
+  const apm = diffMin(b[3], b[4]);
+  const el_apm = document.getElementById('met-apm');
+  if (apm !== null) {
+    el_apm.textContent = fromMin(apm);
+    el_apm.className = 'metric-val ok';
+  } else el_apm.textContent = '--h --';
+
+  // Total
+  const total = (matin || 0) + (apm || 0);
+  const el_total = document.getElementById('met-total');
+  const el_solde = document.getElementById('met-solde');
+  const el_solde_sub = document.getElementById('met-solde-sub');
+
+  if (b[4]) {
+    el_total.textContent = fromMin(total);
+    el_total.className = 'metric-val ok';
+    const solde = total - THEORIQUE_MIN;
+    el_solde.textContent = (solde >= 0 ? '+' : '') + fromMin(solde);
+    el_solde.className = 'metric-val ' + (solde >= 0 ? 'ok' : 'warn');
+    el_solde_sub.textContent = solde >= 0 ? 'excédent' : 'déficit';
+  } else if (b[1]) {
+    // Estimation en cours
+    const now_min = toMin(now());
+    let travaille = 0;
+    if (b[1] && !b[2]) travaille = now_min - toMin(b[1]);
+    else if (b[2] && !b[3]) travaille = toMin(b[2]) - toMin(b[1]);
+    else if (b[3] && !b[4]) travaille = (toMin(b[2]) - toMin(b[1])) + (now_min - toMin(b[3]));
+    el_total.textContent = '~' + fromMin(travaille);
+    el_total.className = 'metric-val';
+    const restant = THEORIQUE_MIN - travaille;
+    el_solde.textContent = restant > 0 ? '-' + fromMin(restant) : fromMin(restant);
+    el_solde.className = 'metric-val ' + (restant <= 0 ? 'ok' : 'warn');
+    el_solde_sub.textContent = restant > 0 ? 'restant estimé' : 'quota atteint';
+  }
+
+  // Progression
+  const travaille_prog = b[4] ? total : calcTravailleNow();
+  const pct = Math.min(100, Math.round((travaille_prog / THEORIQUE_MIN) * 100));
+  document.getElementById('prog-bar').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-travaille').textContent = fromMin(travaille_prog);
+  const restant_prog = Math.max(0, THEORIQUE_MIN - travaille_prog);
+  document.getElementById('prog-restant').textContent = fromMin(restant_prog);
+
+  // Hebdo
+  updateHebdo();
+}
+
+function calcTravailleNow() {
+  const b = state.badges;
+  const now_min = toMin(now());
+  let t = 0;
+  if (b[1] && !b[2]) t = now_min - toMin(b[1]);
+  else if (b[2] && !b[3]) t = toMin(b[2]) - toMin(b[1]);
+  else if (b[3] && !b[4]) t = (toMin(b[2]) - toMin(b[1])) + (now_min - toMin(b[3]));
+  else if (b[4]) {
+    const matin = toMin(b[2]) - toMin(b[1]);
+    const apm   = toMin(b[4]) - toMin(b[3]);
+    t = matin + apm;
+  }
+  return Math.max(0, t);
+}
+
+function updateHebdo() {
+  // Calculer le cumul de la semaine
+  const sem = getNumSemaine(new Date());
+  let cumul = 0;
+  Object.entries(state.hebdo || {}).forEach(([date, min]) => {
+    if (getNumSemaine(new Date(date)) === sem) cumul += min;
+  });
+  // Ajouter le jour en cours
+  cumul += calcTravailleNow();
+
+  const pct = Math.min(100, (cumul / HEBDO_PLAFOND) * 100);
+  document.getElementById('hebdo-bar').style.width = pct + '%';
+  document.getElementById('hebdo-val').textContent = fromMin(cumul);
+  document.getElementById('hebdo-ref').textContent =
+    fromMin(cumul) + ' / ' + fromMin(HEBDO_THEORIQUE);
+  const hebdoBar = document.getElementById('hebdo-bar');
+  if (cumul >= HEBDO_PLAFOND) hebdoBar.style.background = 'linear-gradient(90deg, var(--warn), var(--danger))';
+  else hebdoBar.style.background = 'linear-gradient(90deg, var(--glow3), var(--glow))';
+}
+
+// ══════════════════════════════════════════════════
+// BADGEAGE
+// ══════════════════════════════════════════════════
+function badger(num, btn, evt) {
+  // Ripple
+  const r = document.createElement('span');
+  r.className = 'ripple';
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  r.style.cssText = `width:${size}px;height:${size}px;left:${evt.clientX-rect.left-size/2}px;top:${evt.clientY-rect.top-size/2}px`;
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 600);
+
+  const heure = now();
+  state.badges[num] = heure;
+  localStorage.setItem('bt_state', JSON.stringify(state));
+
+  // Afficher l'heure
+  document.getElementById('time-' + num).textContent = heure;
+
+  // Alerte hors plage
+  const el_alert = document.getElementById('alert-' + num);
+  if (horsPlage(num, heure)) {
+    el_alert.textContent = '⚠ HORS PLAGE';
+    btn.classList.add('alert');
+  } else {
+    el_alert.textContent = '✓ VALIDÉ';
+    btn.classList.remove('alert');
+  }
+
+  // État du bouton
+  btn.classList.remove('active');
+  btn.classList.add('done');
+  btn.disabled = true;
+
+  // Activer le suivant
+  if (num < 4) {
+    const next = document.getElementById('btn-' + (num + 1));
+    next.disabled = false;
+    next.classList.add('active');
+  }
+
+  // Si badge 4 → enregistrer
+  if (num === 4) {
+    envoyer();
+    // Sauvegarder dans hebdo
+    const matin = toMin(state.badges[2]) - toMin(state.badges[1]);
+    const apm   = toMin(state.badges[4]) - toMin(state.badges[3]);
+    if (!state.hebdo) state.hebdo = {};
+    state.hebdo[TODAY] = matin + apm;
+    localStorage.setItem('bt_state', JSON.stringify(state));
+  }
+
+  calculs();
+  // Recalcul toutes les 30s si journée en cours
+  if (num < 4 && !window._calcTimer) {
+    window._calcTimer = setInterval(calculs, 30000);
+  }
+}
+
+// ══════════════════════════════════════════════════
+// ENVOI VERS APPS SCRIPT
+// ══════════════════════════════════════════════════
+async function envoyer() {
+  setStatus('⟳ Enregistrement en cours…', 'loading');
+  const b = state.badges;
+  const matin  = toMin(b[2]) - toMin(b[1]);
+  const pause  = toMin(b[3]) - toMin(b[2]);
+  const apm    = toMin(b[4]) - toMin(b[3]);
+  const total  = matin + apm;
+  const solde  = total - THEORIQUE_MIN;
+
+  const payload = JSON.stringify({
+    type: 'badgeage',
+    date: TODAY,
+    badge1: b[1], badge2: b[2], badge3: b[3], badge4: b[4],
+    matin_min: matin, pause_min: pause, apm_min: apm,
+    total_min: total, solde_min: solde,
+    hors_plage: [1,2,3,4].filter(n => horsPlage(n, b[n])).join(',') || 'aucun'
+  });
+
+  try {
+    let iframe = document.getElementById('bt-iframe');
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.id = 'bt-iframe';
+      iframe.name = 'bt-iframe';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+    }
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = WEBHOOK_URL;
+    form.target = 'bt-iframe';
+    form.style.display = 'none';
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'data';
+    input.value = payload;
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+    await new Promise(r => setTimeout(r, 2000));
+    setStatus('✓ Journée enregistrée dans le Drive', 'ok');
+  } catch(e) {
+    setStatus('✗ Erreur d\'enregistrement : ' + e.message, 'err');
+  }
+}
+
+function setStatus(msg, type) {
+  const el = document.getElementById('status-msg');
+  el.textContent = msg;
+  el.className = 'status-msg show ' + type;
+  if (type === 'ok') setTimeout(() => el.className = 'status-msg', 4000);
+}
+
+// ══════════════════════════════════════════════════
+// RESET
+// ══════════════════════════════════════════════════
+function resetJour() {
+  if (!confirm('Réinitialiser tous les badgeages du jour ?')) return;
+  clearInterval(window._calcTimer);
+  window._calcTimer = null;
+  state.badges = {};
+  localStorage.setItem('bt_state', JSON.stringify(state));
+  location.reload();
+}
+
+// ══════════════════════════════════════════════════
+// RESTAURATION AU CHARGEMENT
+// ══════════════════════════════════════════════════
+function restore() {
+  const b = state.badges;
+  [1,2,3,4].forEach(n => {
+    if (b[n]) {
+      const btn = document.getElementById('btn-' + n);
+      document.getElementById('time-' + n).textContent = b[n];
+      btn.classList.remove('active');
+      btn.classList.add('done');
+      btn.disabled = true;
+      if (horsPlage(n, b[n])) {
+        document.getElementById('alert-' + n).textContent = '⚠ HORS PLAGE';
+        btn.classList.add('alert');
+      } else {
+        document.getElementById('alert-' + n).textContent = '✓ VALIDÉ';
+      }
+    }
+  });
+  // Activer le prochain
+  const done = Object.keys(b).map(Number);
+  const next = Math.max(...done, 0) + 1;
+  if (next <= 4 && done.length > 0) {
+    const nextBtn = document.getElementById('btn-' + next);
+    nextBtn.disabled = false;
+    nextBtn.classList.add('active');
+  }
+  if (done.length === 0) {
+    document.getElementById('btn-1').disabled = false;
+    document.getElementById('btn-1').classList.add('active');
+  }
+  calculs();
+  if (done.length > 0 && done.length < 4) {
+    window._calcTimer = setInterval(calculs, 30000);
+  }
+}
+
+restore();
+</script>
+</body>
+</html>
